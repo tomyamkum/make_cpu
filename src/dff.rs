@@ -1,4 +1,4 @@
-struct Dff {
+pub struct Dff {
 	pub pre_value: bool,
 }
 
