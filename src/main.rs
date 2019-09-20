@@ -8,12 +8,12 @@ fn main() {
 	let mut b: Vec<bool> = Vec::new();
 	a.push(true);
 	a.push(false);
-	a.push(true);
-	a.push(true);
 	a.push(false);
 	a.push(true);
 	a.push(false);
 	a.push(true);
+	a.push(false);
+	a.push(true);
 	a.push(true);
 	a.push(true);
 	a.push(true);
@@ -38,7 +38,14 @@ fn main() {
 	b.push(true);
 	b.push(true);
 	b.push(true);
-	let (ans,x,y) = alu(&mut a,&mut b, true,true,true,true,true,true);
-	println!("{:?}", a);
+	let zx = false;
+	let nx = true;
+	let zy = false;
+	let ny = true;
+	let f = false;
+	let no = true;
+	let (ans,x,y) = alu(&mut a,&mut b, zx, nx, zy, ny, f, no);
+	println!("{:?}", x);
+	println!("{:?}", y);
 	println!("{:?}", ans);
 }

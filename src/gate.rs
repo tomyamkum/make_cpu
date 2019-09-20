@@ -161,6 +161,27 @@ pub fn or16_1(x: &Vec<bool>, y: bool) -> Vec<bool> {
 	ans
 }
 
+pub fn or1_16(x: &Vec<bool>) -> bool {
+	let mut ans = false;
+	ans = or(ans, x[0]);
+	ans = or(ans, x[1]);
+	ans = or(ans, x[2]);
+	ans = or(ans, x[3]);
+	ans = or(ans, x[4]);
+	ans = or(ans, x[5]);
+	ans = or(ans, x[6]);
+	ans = or(ans, x[7]);
+	ans = or(ans, x[8]);
+	ans = or(ans, x[9]);
+	ans = or(ans, x[10]);
+	ans = or(ans, x[11]);
+	ans = or(ans, x[12]);
+	ans = or(ans, x[13]);
+	ans = or(ans, x[14]);
+	ans = or(ans, x[15]);
+	ans
+}
+
 pub fn nor(x: bool, y: bool) -> bool {
 	not(or(x, y))
 }

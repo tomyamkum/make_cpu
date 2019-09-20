@@ -4,6 +4,27 @@ pub fn mux(x: bool, y: bool, sel: bool) -> bool {
 	or(and(x, not(sel)), or(and(x, y), and(y, sel)))
 }
 
+pub fn mux16(x: &Vec<bool>, y: &Vec<bool>, sel: bool) -> Vec<bool> {
+	let mut ans = Vec::new();
+	ans.push(mux(x[0], y[0], sel));
+	ans.push(mux(x[1], y[1], sel));
+	ans.push(mux(x[2], y[2], sel));
+	ans.push(mux(x[3], y[3], sel));
+	ans.push(mux(x[4], y[4], sel));
+	ans.push(mux(x[5], y[5], sel));
+	ans.push(mux(x[6], y[6], sel));
+	ans.push(mux(x[7], y[7], sel));
+	ans.push(mux(x[8], y[8], sel));
+	ans.push(mux(x[9], y[9], sel));
+	ans.push(mux(x[10], y[10], sel));
+	ans.push(mux(x[11], y[11], sel));
+	ans.push(mux(x[12], y[12], sel));
+	ans.push(mux(x[13], y[13], sel));
+	ans.push(mux(x[14], y[14], sel));
+	ans.push(mux(x[15], y[15], sel));
+	ans
+}
+
 pub fn dmux(input: bool, sel: bool) -> (bool, bool) {
 	(and(input, not(sel)), and(input, sel))
 }
@@ -96,10 +117,17 @@ pub fn inc16(x: &Vec<bool>) -> Vec<bool>  {
 pub fn alu(x: &mut Vec<bool>, y: &mut Vec<bool>, zx: bool, nx: bool, zy: bool, ny: bool, f: bool, no: bool) -> (Vec<bool>, bool, bool) {
 	let x = and16_1(&x, not(zx));
 
-	let x = xor16_1(&x, zx);
+	let x = xor16_1(&x, nx);
 
 	let y = and16_1(&y, not(zy));
 
-	let y = xor16_1(&y, zy);
-	(x.to_vec(), true, true)
+	let y = xor16_1(&y, ny);
+
+	let tmp1 = add16(&x, &y);
+	let tmp2 = and16_16(&x, &y);
+	let tmp3 = mux16(&tmp2, &tmp1, f);
+	let ans = xor16_1(&tmp3, no);
+	let zr = not(or1_16(&ans));
+	let ng = ans[15];
+	(ans, zr, ng)
 }
