@@ -30,8 +30,41 @@ pub fn mux4way16(a: [bool; 16], b: [bool; 16], c: [bool; 16], d: [bool; 16], sel
 	ans
 }
 
-pub fn dmux(input: bool, sel: bool) -> (bool, bool) {
-	(and(input, not(sel)), and(input, sel))
+pub fn mux8way16(a: [bool; 16], b: [bool; 16], c: [bool; 16], d: [bool; 16], e: [bool; 16], f: [bool; 16], g: [bool; 16], h: [bool; 16], sel: [bool; 3]) -> [bool; 16] {
+	let mut tmpsel = [true, true];
+	tmpsel[0] = sel[0];
+	tmpsel[1] = sel[1];
+	let ans = mux16(mux4way16(a, b, c, d, tmpsel), mux4way16(e, f, g, h, tmpsel), sel[2]);
+	ans
+}
+
+pub fn dmux(input: bool, sel: bool) -> [bool; 2] {
+	let mut ans: [bool; 2] = [true, true];
+	ans[0] = and(input, not(sel));
+	ans[1] = and(input, sel);
+	ans
+}
+
+pub fn dmux4way(input: bool, sel: [bool; 2]) -> [bool; 4] {
+	let ans = [dmux(dmux(input, sel[1])[0], sel[0])[0], dmux(dmux(input, sel[1])[0], sel[0])[1], dmux(dmux(input, sel[1])[1], sel[0])[0], dmux(dmux(input, sel[1])[1], sel[0])[1]];
+	ans
+}
+
+pub fn dmux8way(input: bool, sel: [bool; 3]) -> [bool; 8] {
+	let mut tmpsel = [true, true];
+	tmpsel[0] = sel[0];
+	tmpsel[1] = sel[1];
+	let tmpans = dmux4way(input, tmpsel);
+	let mut ans: [bool; 8] = [true; 8];
+	ans[0] = dmux(tmpans[0], sel[2])[0];
+	ans[4] = dmux(tmpans[0], sel[2])[1];
+	ans[1] = dmux(tmpans[1], sel[2])[0];
+	ans[5] = dmux(tmpans[1], sel[2])[1];
+	ans[2] = dmux(tmpans[2], sel[2])[0];
+	ans[6] = dmux(tmpans[2], sel[2])[1];
+	ans[3] = dmux(tmpans[3], sel[2])[0];
+	ans[7] = dmux(tmpans[3], sel[2])[1];
+	ans	 
 }
 
 pub fn halfaddr(x: bool, y: bool) -> (bool, bool) {
