@@ -1,16 +1,16 @@
 pub struct Dff {
-	pub pre_value: bool,
+	pub state: bool,
 }
 
 impl Dff {
 	pub fn new(initial_state: bool) -> Dff {
 		Dff {
-			pre_value: initial_state,
+			state: initial_state,
 		}
 	}
-	pub fn dff(&mut self, x: bool) -> bool {
-		let result = self.pre_value;
-		self.pre_value = x;
+	pub fn load(&mut self, x: bool) -> bool {
+		let result = self.state;
+		self.state = x;
 		result
 	}
 }
