@@ -1,4 +1,3 @@
-use crate::gate::*;
 use crate::dff::*;
 use crate::comb_circ::*;
 
@@ -20,33 +19,33 @@ impl Bit {
 }
 
 pub struct Reg {
-	pub bit: [Bit; 16],
+	pub bits: [Bit; 16],
 }
 
 impl Reg {
 	pub fn new(initial_state: [bool; 16]) -> Reg {
 		Reg {
-			bit: [Bit::new(initial_state[0]), Bit::new(initial_state[1]), Bit::new(initial_state[2]), Bit::new(initial_state[3]), Bit::new(initial_state[4]), Bit::new(initial_state[5]), Bit::new(initial_state[6]), Bit::new(initial_state[7]), Bit::new(initial_state[8]), Bit::new(initial_state[9]), Bit::new(initial_state[10]), Bit::new(initial_state[11]), Bit::new(initial_state[12]), Bit::new(initial_state[13]), Bit::new(initial_state[14]), Bit::new(initial_state[15])],
+			bits: [Bit::new(initial_state[0]), Bit::new(initial_state[1]), Bit::new(initial_state[2]), Bit::new(initial_state[3]), Bit::new(initial_state[4]), Bit::new(initial_state[5]), Bit::new(initial_state[6]), Bit::new(initial_state[7]), Bit::new(initial_state[8]), Bit::new(initial_state[9]), Bit::new(initial_state[10]), Bit::new(initial_state[11]), Bit::new(initial_state[12]), Bit::new(initial_state[13]), Bit::new(initial_state[14]), Bit::new(initial_state[15])],
 		}
 	}
 	pub fn load(&mut self, input: [bool; 16], load: bool) -> [bool; 16] {
 		[
-			self.bit[0].load(input[0], load),
-			self.bit[1].load(input[1], load),
-			self.bit[2].load(input[2], load),
-			self.bit[3].load(input[3], load),
-			self.bit[4].load(input[4], load),
-			self.bit[5].load(input[5], load),
-			self.bit[6].load(input[6], load),
-			self.bit[7].load(input[7], load),
-			self.bit[8].load(input[8], load),
-			self.bit[9].load(input[9], load),
-			self.bit[10].load(input[10], load),
-			self.bit[11].load(input[11], load),
-			self.bit[12].load(input[12], load),
-			self.bit[13].load(input[13], load),
-			self.bit[14].load(input[14], load),
-			self.bit[15].load(input[15], load),
+			self.bits[0].load(input[0], load),
+			self.bits[1].load(input[1], load),
+			self.bits[2].load(input[2], load),
+			self.bits[3].load(input[3], load),
+			self.bits[4].load(input[4], load),
+			self.bits[5].load(input[5], load),
+			self.bits[6].load(input[6], load),
+			self.bits[7].load(input[7], load),
+			self.bits[8].load(input[8], load),
+			self.bits[9].load(input[9], load),
+			self.bits[10].load(input[10], load),
+			self.bits[11].load(input[11], load),
+			self.bits[12].load(input[12], load),
+			self.bits[13].load(input[13], load),
+			self.bits[14].load(input[14], load),
+			self.bits[15].load(input[15], load),
 		]
 	}
 }
@@ -161,13 +160,13 @@ impl Ram4K {
 }
 
 pub struct Ram16K {
-	pub ram4Ks: [Ram4K; 4],
+	pub ram4ks: [Ram4K; 4],
 }
 
 impl Ram16K {
 	pub fn new(initial_state: [[[[[[bool; 16]; 8]; 8]; 8]; 8]; 4]) -> Ram16K {
 		Ram16K {
-			ram4Ks: [Ram4K::new(initial_state[0]), Ram4K::new(initial_state[1]), Ram4K::new(initial_state[2]), Ram4K::new(initial_state[3])],
+			ram4ks: [Ram4K::new(initial_state[0]), Ram4K::new(initial_state[1]), Ram4K::new(initial_state[2]), Ram4K::new(initial_state[3])],
 		}
 	}
 	pub fn load(&mut self, input: [bool; 16], address: [bool; 14], load: bool) -> [[[[[[bool; 16]; 8]; 8]; 8]; 8]; 4] {
@@ -176,10 +175,47 @@ impl Ram16K {
 		let sel = dmux4way(load, address1);
 
 		[
-			self.ram4Ks[0].load(input, address2, sel[0]),
-			self.ram4Ks[1].load(input, address2, sel[1]),
-			self.ram4Ks[2].load(input, address2, sel[2]),
-			self.ram4Ks[3].load(input, address2, sel[3]),
+			self.ram4ks[0].load(input, address2, sel[0]),
+			self.ram4ks[1].load(input, address2, sel[1]),
+			self.ram4ks[2].load(input, address2, sel[2]),
+			self.ram4ks[3].load(input, address2, sel[3]),
+		]
+	}
+}
+
+pub struct PC {
+	pub reg: Reg,
+}
+
+impl PC {
+	pub fn new() -> PC {
+		PC {
+			reg: Reg::new([false; 16]),
+		}
+	}
+
+	pub fn next(&mut self, input: [bool; 16], inc: bool, load: bool, reset: bool) -> [bool; 16] {
+		let mut state = self.reg.load([true; 16], false);
+		state = self.reg.load(inc16(state), inc);
+		state = self.reg.load(input, load);
+		state = self.reg.load([false; 16], reset);
+		[
+			state[0],
+			state[1],
+			state[2],
+			state[3],
+			state[4],
+			state[5],
+			state[6],
+			state[7],
+			state[8],
+			state[9],
+			state[10],
+			state[11],
+			state[12],
+			state[13],
+			state[14],
+			state[15],
 		]
 	}
 }

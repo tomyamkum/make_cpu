@@ -67,52 +67,67 @@ pub fn dmux8way(input: bool, sel: [bool; 3]) -> [bool; 8] {
 	ans	 
 }
 
-pub fn halfaddr(x: bool, y: bool) -> (bool, bool) {
-	(and(x, y), xor(x, y))
+pub fn halfaddr(x: bool, y: bool) -> [bool; 2] {
+	[and(x, y), xor(x, y)]
 }
 
-pub fn fulladdr(x: bool, y: bool, c: bool) -> (bool, bool) {
-	let (c1, s1) = halfaddr(x, y);
-	let (c2, s2) = halfaddr(s1, c);
-	(or(c1, c2), s2)
+pub fn fulladdr(x: bool, y: bool, c: bool) -> [bool; 2] {
+	let [c1, s1] = halfaddr(x, y);
+	let [c2, s2] = halfaddr(s1, c);
+	[or(c1, c2), s2]
 }
 
 pub fn add16(x: [bool; 16], y: [bool; 16]) -> [bool; 16] {
 	let mut ans: [bool; 16] = [true; 16];
-	let mut tmp: bool;
+	let mut tmp: [bool; 2];
 	let mut c = false;
-	let (tmp, c) = fulladdr(x[0], y[0], c);
-	ans[0] = tmp;
-	let (tmp, c) = fulladdr(x[1], y[1], c);
-	ans[1] = tmp;
-	let (tmp, c) = fulladdr(x[2], y[2], c);
-	ans[2] = tmp;
-	let (tmp, c) = fulladdr(x[3], y[3], c);
-	ans[3] = tmp;
-	let (tmp, c) = fulladdr(x[4], y[4], c);
-	ans[4] = tmp;
-	let (tmp, c) = fulladdr(x[5], y[5], c);
-	ans[5] = tmp;
-	let (tmp, c) = fulladdr(x[6], y[6], c);
-	ans[6] = tmp;
-	let (tmp, c) = fulladdr(x[7], y[7], c);
-	ans[7] = tmp;
-	let (tmp, c) = fulladdr(x[8], y[8], c);
-	ans[8] = tmp;
-	let (tmp, c) = fulladdr(x[9], y[9], c);
-	ans[9] = tmp;
-	let (tmp, c) = fulladdr(x[10], y[10], c);
-	ans[10] = tmp;
-	let (tmp, c) = fulladdr(x[12], y[12], c);
-	ans[11] = tmp;
-	let (tmp, c) = fulladdr(x[13], y[13], c);
-	ans[12] = tmp;
-	let (tmp, c) = fulladdr(x[14], y[14], c);
-	ans[13] = tmp;
-	let (tmp, c) = fulladdr(x[14], y[14], c);
-	ans[14] = tmp;
-	let (tmp, c) = fulladdr(x[15], y[15], c);
-	ans[15] = tmp;
+	tmp = fulladdr(x[0], y[0], c);
+	ans[0] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[1], y[1], c);
+	ans[1] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[2], y[2], c);
+	ans[2] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[3], y[3], c);
+	ans[3] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[4], y[4], c);
+	ans[4] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[5], y[5], c);
+	ans[5] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[6], y[6], c);
+	ans[6] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[7], y[7], c);
+	ans[7] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[8], y[8], c);
+	ans[8] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[9], y[9], c);
+	ans[9] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[10], y[10], c);
+	ans[10] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[11], y[11], c);
+	ans[11] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[12], y[12], c);
+	ans[12] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[13], y[13], c);
+	ans[13] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[14], y[14], c);
+	ans[14] = tmp[1];
+	c = tmp[0];
+	tmp = fulladdr(x[15], y[15], c);
+	ans[15] = tmp[1];
 	ans
 }
 
