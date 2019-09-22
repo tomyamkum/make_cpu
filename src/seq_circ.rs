@@ -196,8 +196,8 @@ impl PC {
 
 	pub fn next(&mut self, input: [bool; 16], inc: bool, load: bool, reset: bool) -> [bool; 16] {
 		let mut state = self.reg.load([true; 16], false);
-		state = self.reg.load(inc16(state), inc);
-		state = self.reg.load(input, load);
+		let mut _state = self.reg.load(inc16(state), inc);
+		_state = self.reg.load(input, load);
 		state = self.reg.load([false; 16], reset);
 		[
 			state[0],
