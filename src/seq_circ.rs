@@ -183,6 +183,34 @@ impl Ram16K {
 	}
 }
 
+pub struct Ram32K {
+	pub ram4ks: [Ram4K; 8],
+}
+
+impl Ram32K {
+	pub fn new(initial_state: [[[[[[bool; 16]; 8]; 8]; 8]; 8]; 8]) -> Ram32K {
+		Ram32K {
+			ram4ks: [Ram4K::new(initial_state[0]), Ram4K::new(initial_state[1]), Ram4K::new(initial_state[2]), Ram4K::new(initial_state[3]), Ram4K::new(initial_state[4]), Ram4K::new(initial_state[5]), Ram4K::new(initial_state[6]), Ram4K::new(initial_state[7])],
+		}
+	}
+	pub fn load(&mut self, input: [bool; 16], address: [bool; 15], load: bool) -> [[[[[[bool; 16]; 8]; 8]; 8]; 8]; 8] {
+		let address1 = [address[0], address[1], address[2]];
+		let address2 = [address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11], address[12], address[13], address[14]];
+		let sel = dmux8way(load, address1);
+
+		[
+			self.ram4ks[0].load(input, address2, sel[0]),
+			self.ram4ks[1].load(input, address2, sel[1]),
+			self.ram4ks[2].load(input, address2, sel[2]),
+			self.ram4ks[3].load(input, address2, sel[3]),
+			self.ram4ks[4].load(input, address2, sel[4]),
+			self.ram4ks[5].load(input, address2, sel[5]),
+			self.ram4ks[6].load(input, address2, sel[6]),
+			self.ram4ks[7].load(input, address2, sel[7]),
+		]
+	}
+}
+
 pub struct PC {
 	pub reg: Reg,
 }

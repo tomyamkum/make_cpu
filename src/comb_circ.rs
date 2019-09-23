@@ -5,24 +5,24 @@ pub fn mux(x: bool, y: bool, sel: bool) -> bool {
 }
 
 pub fn mux16(x: [bool; 16], y: [bool; 16], sel: bool) -> [bool; 16] {
-	let mut ans: [bool; 16] = [true; 16];
-	ans[0] = mux(x[0], y[0], sel);
-	ans[1] = mux(x[1], y[1], sel);
-	ans[2] = mux(x[2], y[2], sel);
-	ans[3] = mux(x[3], y[3], sel);
-	ans[4] = mux(x[4], y[4], sel);
-	ans[5] = mux(x[5], y[5], sel);
-	ans[6] = mux(x[6], y[6], sel);
-	ans[7] = mux(x[7], y[7], sel);
-	ans[8] = mux(x[8], y[8], sel);
-	ans[9] = mux(x[9], y[9], sel);
-	ans[10] = mux(x[10], y[10], sel);
-	ans[11] = mux(x[11], y[11], sel);
-	ans[12] = mux(x[12], y[12], sel);
-	ans[13] = mux(x[13], y[13], sel);
-	ans[14] = mux(x[14], y[14], sel);
-	ans[15] = mux(x[15], y[15], sel);
-	ans
+	[
+		mux(x[0], y[0], sel),
+		mux(x[1], y[1], sel),
+		mux(x[2], y[2], sel),
+		mux(x[3], y[3], sel),
+		mux(x[4], y[4], sel),
+		mux(x[5], y[5], sel),
+		mux(x[6], y[6], sel),
+		mux(x[7], y[7], sel),
+		mux(x[8], y[8], sel),
+		mux(x[9], y[9], sel),
+		mux(x[10], y[10], sel),
+		mux(x[11], y[11], sel),
+		mux(x[12], y[12], sel),
+		mux(x[13], y[13], sel),
+		mux(x[14], y[14], sel),
+		mux(x[15], y[15], sel),
+	]
 }
 
 pub fn mux4way16(a: [bool; 16], b: [bool; 16], c: [bool; 16], d: [bool; 16], sel: [bool; 2]) -> [bool; 16] {
