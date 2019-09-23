@@ -6,7 +6,8 @@ use crate::util::*;
 
 pub struct Computer {
 	pub rom: Ram32K,
-	pub memory: Ram16K,
+	pub memory: Ram32K,
+	pub screen: Ram8K,
 	pub cpu: CPU,
 }
 
@@ -14,7 +15,8 @@ impl Computer {
 	pub fn new() -> Computer {
 		Computer {
 			rom: Ram32K::new([[[[[[false; 16]; 8]; 8]; 8]; 8]; 8]),
-			memory: Ram16K::new([[[[[[false; 16]; 8]; 8]; 8]; 8]; 4]),
+			memory: Ram32K::new([[[[[[false; 16]; 8]; 8]; 8]; 8]; 8]),
+			screen: Ram8K::new([[[[[[false; 16]; 8]; 8]; 8]; 8]; 2]),
 			cpu: CPU::new(),
 		}
 	}
@@ -44,14 +46,24 @@ impl Computer {
 			self.rom.load(inst_tmp, u2b15(i as u16), true);
 		}
 	}
-	pub fn exec(reset: bool) {
-		let pc = 0; 
+
+	pub fn exec(&mut self, reset: bool) -> [bool; 16] {
+		let mut cpu_result = CPUResult {
+			out_memory: [true; 16],
+			write_memory: true,
+			address_memory: [true; 15],
+			pc: [false; 15],
+		};
+		let mut in_m = [true; 16];
 		loop {
-			let inst = rom.load([true; 16], u2b15(pc as u16), false);
+			let inst = self.rom.load([true; 16], cpu_result.pc, false);
+			println!("{:?}", inst);
 			if inst == [false; 16] {
-				break;
+					break;
 			}
-			let (out_m, write_m, address_m, pc) = cpu.next(inst, in_m, reset);
+			cpu_result = self.cpu.next(inst, in_m, reset);
+			in_m = self.memory.load(cpu_result.out_memory, cpu_result.address_memory, cpu_result.write_memory);
 		}
+		in_m
 	}
 }

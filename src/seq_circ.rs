@@ -60,9 +60,9 @@ impl Ram8 {
 			regs: [Reg::new(initial_state[0]), Reg::new(initial_state[1]), Reg::new(initial_state[2]), Reg::new(initial_state[3]), Reg::new(initial_state[4]), Reg::new(initial_state[5]), Reg::new(initial_state[6]), Reg::new(initial_state[7])],
 		}
 	}
-	pub fn load(&mut self, input: [bool; 16], address: [bool; 3], load: bool) -> [[bool; 16]; 8] {
+	pub fn load(&mut self, input: [bool; 16], address: [bool; 3], load: bool) -> [bool; 16] {
 		let sel = dmux8way(load, address);
-		[
+		mux8way16(
 			self.regs[0].load(input, sel[0]),
 			self.regs[1].load(input, sel[1]),
 			self.regs[2].load(input, sel[2]),
@@ -71,7 +71,8 @@ impl Ram8 {
 			self.regs[5].load(input, sel[5]),
 			self.regs[6].load(input, sel[6]),
 			self.regs[7].load(input, sel[7]),
-		]
+			address,
+		)
 	}
 }
 
@@ -85,12 +86,12 @@ impl Ram64 {
 			ram8s: [Ram8::new(initial_state[0]), Ram8::new(initial_state[1]), Ram8::new(initial_state[2]), Ram8::new(initial_state[3]), Ram8::new(initial_state[4]), Ram8::new(initial_state[5]), Ram8::new(initial_state[6]), Ram8::new(initial_state[7])],
 		}
 	}
-	pub fn load(&mut self, input: [bool; 16], address: [bool; 6], load: bool) -> [[[bool; 16]; 8]; 8] {
+	pub fn load(&mut self, input: [bool; 16], address: [bool; 6], load: bool) -> [bool; 16] {
 		let address1 = [address[0], address[1], address[2]];
 		let address2 = [address[3], address[4], address[5]];
 		let sel = dmux8way(load, address1);
 
-		[
+		mux8way16(
 			self.ram8s[0].load(input, address2, sel[0]),
 			self.ram8s[1].load(input, address2, sel[1]),
 			self.ram8s[2].load(input, address2, sel[2]),
@@ -99,7 +100,8 @@ impl Ram64 {
 			self.ram8s[5].load(input, address2, sel[5]),
 			self.ram8s[6].load(input, address2, sel[6]),
 			self.ram8s[7].load(input, address2, sel[7]),
-		]
+			address1,
+		)
 	}
 }
 
@@ -113,12 +115,12 @@ impl Ram512 {
 			ram64s: [Ram64::new(initial_state[0]), Ram64::new(initial_state[1]), Ram64::new(initial_state[2]), Ram64::new(initial_state[3]), Ram64::new(initial_state[4]), Ram64::new(initial_state[5]), Ram64::new(initial_state[6]), Ram64::new(initial_state[7])],
 		}
 	}
-	pub fn load(&mut self, input: [bool; 16], address: [bool; 9], load: bool) -> [[[[bool; 16]; 8]; 8]; 8] {
+	pub fn load(&mut self, input: [bool; 16], address: [bool; 9], load: bool) -> [bool; 16] {
 		let address1 = [address[0], address[1], address[2]];
 		let address2 = [address[3], address[4], address[5], address[6], address[7], address[8]];
 		let sel = dmux8way(load, address1);
 
-		[
+		mux8way16(
 			self.ram64s[0].load(input, address2, sel[0]),
 			self.ram64s[1].load(input, address2, sel[1]),
 			self.ram64s[2].load(input, address2, sel[2]),
@@ -127,7 +129,8 @@ impl Ram512 {
 			self.ram64s[5].load(input, address2, sel[5]),
 			self.ram64s[6].load(input, address2, sel[6]),
 			self.ram64s[7].load(input, address2, sel[7]),
-		]
+			address1,
+		)
 	}
 }
 
@@ -141,12 +144,12 @@ impl Ram4K {
 			ram512s: [Ram512::new(initial_state[0]), Ram512::new(initial_state[1]), Ram512::new(initial_state[2]), Ram512::new(initial_state[3]), Ram512::new(initial_state[4]), Ram512::new(initial_state[5]), Ram512::new(initial_state[6]), Ram512::new(initial_state[7])],
 		}
 	}
-	pub fn load(&mut self, input: [bool; 16], address: [bool; 12], load: bool) -> [[[[[bool; 16]; 8]; 8]; 8]; 8] {
+	pub fn load(&mut self, input: [bool; 16], address: [bool; 12], load: bool) -> [bool; 16] {
 		let address1 = [address[0], address[1], address[2]];
 		let address2 = [address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11]];
 		let sel = dmux8way(load, address1);
 
-		[
+		mux8way16(
 			self.ram512s[0].load(input, address2, sel[0]),
 			self.ram512s[1].load(input, address2, sel[1]),
 			self.ram512s[2].load(input, address2, sel[2]),
@@ -155,7 +158,31 @@ impl Ram4K {
 			self.ram512s[5].load(input, address2, sel[5]),
 			self.ram512s[6].load(input, address2, sel[6]),
 			self.ram512s[7].load(input, address2, sel[7]),
-		]
+			address1,
+		)
+	}
+}
+
+pub struct Ram8K {
+	pub ram4ks: [Ram4K; 2],
+}
+
+impl Ram8K {
+	pub fn new(initial_state: [[[[[[bool; 16]; 8]; 8]; 8]; 8]; 2]) -> Ram8K {
+		Ram8K {
+			ram4ks: [Ram4K::new(initial_state[0]), Ram4K::new(initial_state[1])],
+		}
+	}
+	pub fn load(&mut self, input: [bool; 16], address: [bool; 13], load: bool) -> [bool; 16] {
+		let address1 = address[0];
+		let address2 = [address[1], address[2], address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11], address[12]];
+		let sel = dmux(load, address1);
+
+		mux16(
+			self.ram4ks[0].load(input, address2, sel[0]),
+			self.ram4ks[1].load(input, address2, sel[1]),
+			address1,
+		)
 	}
 }
 
@@ -169,17 +196,18 @@ impl Ram16K {
 			ram4ks: [Ram4K::new(initial_state[0]), Ram4K::new(initial_state[1]), Ram4K::new(initial_state[2]), Ram4K::new(initial_state[3])],
 		}
 	}
-	pub fn load(&mut self, input: [bool; 16], address: [bool; 14], load: bool) -> [[[[[[bool; 16]; 8]; 8]; 8]; 8]; 4] {
+	pub fn load(&mut self, input: [bool; 16], address: [bool; 14], load: bool) -> [bool; 16] {
 		let address1 = [address[0], address[1]];
 		let address2 = [address[2], address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11], address[12], address[13]];
 		let sel = dmux4way(load, address1);
 
-		[
+		mux4way16(
 			self.ram4ks[0].load(input, address2, sel[0]),
 			self.ram4ks[1].load(input, address2, sel[1]),
 			self.ram4ks[2].load(input, address2, sel[2]),
 			self.ram4ks[3].load(input, address2, sel[3]),
-		]
+			address1,
+		)
 	}
 }
 
@@ -193,12 +221,12 @@ impl Ram32K {
 			ram4ks: [Ram4K::new(initial_state[0]), Ram4K::new(initial_state[1]), Ram4K::new(initial_state[2]), Ram4K::new(initial_state[3]), Ram4K::new(initial_state[4]), Ram4K::new(initial_state[5]), Ram4K::new(initial_state[6]), Ram4K::new(initial_state[7])],
 		}
 	}
-	pub fn load(&mut self, input: [bool; 16], address: [bool; 15], load: bool) -> [[[[[[bool; 16]; 8]; 8]; 8]; 8]; 8] {
+	pub fn load(&mut self, input: [bool; 16], address: [bool; 15], load: bool) -> [bool; 16] {
 		let address1 = [address[0], address[1], address[2]];
 		let address2 = [address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11], address[12], address[13], address[14]];
 		let sel = dmux8way(load, address1);
 
-		[
+		mux8way16(
 			self.ram4ks[0].load(input, address2, sel[0]),
 			self.ram4ks[1].load(input, address2, sel[1]),
 			self.ram4ks[2].load(input, address2, sel[2]),
@@ -207,7 +235,8 @@ impl Ram32K {
 			self.ram4ks[5].load(input, address2, sel[5]),
 			self.ram4ks[6].load(input, address2, sel[6]),
 			self.ram4ks[7].load(input, address2, sel[7]),
-		]
+			address1,
+		)
 	}
 }
 

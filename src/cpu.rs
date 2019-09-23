@@ -8,6 +8,13 @@ pub struct CPU {
 	pub d_reg: Reg,
 }
 
+pub struct CPUResult {
+	pub out_memory: [bool; 16],
+	pub write_memory: bool, 
+	pub address_memory: [bool; 15],
+	pub pc: [bool; 15],
+}
+
 impl CPU {
 	pub fn new() -> CPU {
 		CPU {
@@ -17,7 +24,7 @@ impl CPU {
 		}
 	}
 
-	pub fn next(&mut self, inst: [bool; 16], in_m: [bool; 16], reset: bool) -> ([bool; 16], bool, [bool; 15], [bool; 15]) {
+	pub fn next(&mut self, inst: [bool; 16], in_m: [bool; 16], reset: bool) -> CPUResult {
 		let c_inst = inst[0];
 		let a_m_input = mux16(self.a_reg.load([true; 16], false), in_m, inst[3]);
 		let address_m = self.a_reg.load([true; 16], false);
@@ -82,6 +89,11 @@ impl CPU {
 			pc_out[13],
 			pc_out[14],
 		];
-		(out_m, write_m, result_address_m, result_pc)
+		CPUResult {
+			out_memory: out_m,
+			write_memory: write_m,
+			address_memory: result_address_m,
+			pc: result_pc,
+		}
 	}
 }
