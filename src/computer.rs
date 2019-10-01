@@ -21,7 +21,7 @@ impl Computer {
 		}
 	}
 	pub fn load(&mut self, path: &str) {
-		let mut content = fs::read_to_string(path).unwrap();
+		let content = fs::read_to_string(path).unwrap();
 		let mut inst = vec![];
 		let mut tmp: [bool; 16] = [true; 16];
 		let mut index = 0;
@@ -32,11 +32,11 @@ impl Computer {
 			}
 			else {
 				if i == '1' {
-					tmp[index] = true;
+					tmp[15-index] = true;
 					index += 1;
 				}
 				else {
-					tmp[index] = false;
+					tmp[15-index] = false;
 					index += 1;
 				}
 			}
@@ -54,16 +54,13 @@ impl Computer {
 			address_memory: [true; 15],
 			pc: [false; 15],
 		};
-		let mut in_m = [true; 16];
+		let mut in_m = [false; 16];
 		loop {
 			let inst = self.rom.load([true; 16], cpu_result.pc, false);
-			println!("{:?}", inst);
-			if inst == [false; 16] {
-					break;
-			}
 			cpu_result = self.cpu.next(inst, in_m, reset);
 			in_m = self.memory.load(cpu_result.out_memory, cpu_result.address_memory, cpu_result.write_memory);
+			println!("{:?}", self.memory.load([true; 16], [true,false,false,false,true,false,false,false,false,false,false,false,false,false,false], false));
 		}
-		in_m
+		self.memory.load([false; 16], [false; 15], false)
 	}
 }

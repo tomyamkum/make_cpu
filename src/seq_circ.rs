@@ -87,8 +87,8 @@ impl Ram64 {
 		}
 	}
 	pub fn load(&mut self, input: [bool; 16], address: [bool; 6], load: bool) -> [bool; 16] {
-		let address1 = [address[0], address[1], address[2]];
-		let address2 = [address[3], address[4], address[5]];
+		let address1 = [address[3], address[4], address[5]];
+		let address2 = [address[0], address[1], address[2]];
 		let sel = dmux8way(load, address1);
 
 		mux8way16(
@@ -116,8 +116,8 @@ impl Ram512 {
 		}
 	}
 	pub fn load(&mut self, input: [bool; 16], address: [bool; 9], load: bool) -> [bool; 16] {
-		let address1 = [address[0], address[1], address[2]];
-		let address2 = [address[3], address[4], address[5], address[6], address[7], address[8]];
+		let address1 = [address[6], address[7], address[8]];
+		let address2 = [address[0], address[1], address[2], address[3], address[4], address[5]];
 		let sel = dmux8way(load, address1);
 
 		mux8way16(
@@ -145,8 +145,8 @@ impl Ram4K {
 		}
 	}
 	pub fn load(&mut self, input: [bool; 16], address: [bool; 12], load: bool) -> [bool; 16] {
-		let address1 = [address[0], address[1], address[2]];
-		let address2 = [address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11]];
+		let address1 = [address[9], address[10], address[11]];
+		let address2 = [address[0], address[1], address[2], address[3], address[4], address[5], address[6], address[7], address[8]];
 		let sel = dmux8way(load, address1);
 
 		mux8way16(
@@ -174,8 +174,8 @@ impl Ram8K {
 		}
 	}
 	pub fn load(&mut self, input: [bool; 16], address: [bool; 13], load: bool) -> [bool; 16] {
-		let address1 = address[0];
-		let address2 = [address[1], address[2], address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11], address[12]];
+		let address1 = address[12];
+		let address2 = [address[0], address[1], address[2], address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11]];
 		let sel = dmux(load, address1);
 
 		mux16(
@@ -197,8 +197,8 @@ impl Ram16K {
 		}
 	}
 	pub fn load(&mut self, input: [bool; 16], address: [bool; 14], load: bool) -> [bool; 16] {
-		let address1 = [address[0], address[1]];
-		let address2 = [address[2], address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11], address[12], address[13]];
+		let address1 = [address[12], address[13]];
+		let address2 = [address[0], address[1], address[2], address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11]];
 		let sel = dmux4way(load, address1);
 
 		mux4way16(
@@ -222,8 +222,8 @@ impl Ram32K {
 		}
 	}
 	pub fn load(&mut self, input: [bool; 16], address: [bool; 15], load: bool) -> [bool; 16] {
-		let address1 = [address[0], address[1], address[2]];
-		let address2 = [address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11], address[12], address[13], address[14]];
+		let address1 = [address[12], address[13], address[14]];
+		let address2 = [address[0], address[1], address[2], address[3], address[4], address[5], address[6], address[7], address[8], address[9], address[10], address[11]];
 		let sel = dmux8way(load, address1);
 
 		mux8way16(

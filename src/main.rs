@@ -1,8 +1,5 @@
-use make_cpu::cpu::*;
 use make_cpu::computer::*;
-use make_cpu::gate::*;
-use make_cpu::comb_circ::*;
-use make_cpu::util::*;
+use make_cpu::seq_circ::*;
 
 fn main() {
 	let mut computer = Computer::new();

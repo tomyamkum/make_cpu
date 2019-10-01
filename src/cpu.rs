@@ -25,35 +25,41 @@ impl CPU {
 	}
 
 	pub fn next(&mut self, inst: [bool; 16], in_m: [bool; 16], reset: bool) -> CPUResult {
-		let c_inst = inst[0];
-		let a_m_input = mux16(self.a_reg.load([true; 16], false), in_m, inst[3]);
-		let address_m = self.a_reg.load([true; 16], false);
+		let c_inst = inst[15];
+		let a_m_input = mux16(self.a_reg.load([true; 16], false), in_m, inst[12]);
 		let d_input = self.d_reg.load([true; 16], false);
+		let mut alu_result = ALUResult {
+			out: [true; 16],
+			zr: true, 
+			ng: true,
+		};
 
-		let (out_m, c1, c2) = alu(d_input, a_m_input, inst[4], inst[5], inst[6], inst[7], inst[8], inst[9]);
-		let write_m = inst[12];
+		alu_result = alu(d_input, a_m_input, inst[11], inst[10], inst[9], inst[8], inst[7], inst[6]);
 
 		let dest = [
-			and(c_inst, inst[10]),
-			and(c_inst, inst[11]),
-			and(c_inst, inst[12]),
+			and(c_inst, inst[5]),
+			and(c_inst, inst[4]),
+			and(c_inst, inst[3]),
 		];
+
+		let write_m = and(c_inst, inst[3]);
 
 		let jump = [
-			and(c_inst, inst[13]),
-			and(c_inst, inst[14]),
-			and(c_inst, inst[15]),
+			and(c_inst, inst[2]),
+			and(c_inst, inst[1]),
+			and(c_inst, inst[0]),
 		];
 
-		let out_is_pos = and(not(c1), not(c2));
-		let out_is_zero = c1;
-		let out_is_neg = c2;
+		let out_is_pos = and(not(alu_result.zr), not(alu_result.ng));
+		let out_is_zero = alu_result.zr;
+		let out_is_neg = alu_result.ng;
 
 		let pc_load = or(or(and(jump[2], out_is_pos), and(jump[1], out_is_zero)), and(jump[0], out_is_neg));
 
-		self.d_reg.load(out_m, dest[1]);
-		let in_a = mux16(inst, out_m, c_inst);
+		self.d_reg.load(alu_result.out, dest[1]);
+		let in_a = mux16(inst, alu_result.out, c_inst);
 		self.a_reg.load(in_a, or(not(c_inst), dest[0]));
+		let address_m = self.a_reg.load([true; 16], false);
 		let pc_out = self.pc.next(address_m, true, pc_load, reset);
 		let result_address_m = [
 			address_m[0],
@@ -90,7 +96,7 @@ impl CPU {
 			pc_out[14],
 		];
 		CPUResult {
-			out_memory: out_m,
+			out_memory: alu_result.out,
 			write_memory: write_m,
 			address_memory: result_address_m,
 			pc: result_pc,

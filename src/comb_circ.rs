@@ -136,7 +136,13 @@ pub fn inc16(x: [bool; 16]) -> [bool; 16]  {
 	add16(x, y)
 }
 
-pub fn alu(x: [bool; 16], y: [bool; 16], zx: bool, nx: bool, zy: bool, ny: bool, f: bool, no: bool) -> ([bool; 16], bool, bool) {
+pub struct ALUResult {
+	pub out: [bool; 16],
+	pub zr: bool,
+	pub ng: bool,
+}
+
+pub fn alu(x: [bool; 16], y: [bool; 16], zx: bool, nx: bool, zy: bool, ny: bool, f: bool, no: bool) -> ALUResult {
 	let x = and16_1(x, not(zx));
 
 	let x = xor16_1(x, nx);
@@ -151,5 +157,9 @@ pub fn alu(x: [bool; 16], y: [bool; 16], zx: bool, nx: bool, zy: bool, ny: bool,
 	let ans = xor16_1(tmp3, no);
 	let zr = not(or16way(ans));
 	let ng = ans[15];
-	(ans, zr, ng)
+	ALUResult {
+		out: ans,
+		zr: zr,
+		ng: ng,
+	}
 }
