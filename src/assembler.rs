@@ -189,7 +189,5 @@ pub fn assemble() -> Result<(), Box<std::error::Error>> {
 			}
 		}
 	}
-	let a:u16 = 3;
-	println!("{:?}", u2b15(a));
 	Ok(())
 }
