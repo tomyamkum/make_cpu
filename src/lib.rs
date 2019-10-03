@@ -5,3 +5,4 @@ pub mod seq_circ;
 pub mod cpu;
 pub mod computer;
 pub mod util;
+pub mod assembler;
