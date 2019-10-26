@@ -1,36 +1,36 @@
 use std::fs::File;
-use std::io::{self, BufRead, BufReader};
+use std::io::{BufRead, BufReader};
 use std::io::{BufWriter, Write};
 use std::collections::HashMap;
-use crate::util::*;
+//use crate::util::*;
 
-const SP: [bool; 15] = [false; 15];
-const LCL: [bool; 15] = [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
-const ARG: [bool; 15] = [false, true, false, false, false, false, false, false, false, false, false, false, false, false, false];
-const THIS: [bool; 15] = [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false];
-const THAT: [bool; 15] = [false, false, true, false, false, false, false, false, false, false, false, false, false, false, false];
-const R0: [bool; 15] = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
-const R1: [bool; 15] = [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
-const R2: [bool; 15] = [false, true, false, false, false, false, false, false, false, false, false, false, false, false, false];
-const R3: [bool; 15] = [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false];
-const R4: [bool; 15] = [false, false, true, false, false, false, false, false, false, false, false, false, false, false, false];
-const R5: [bool; 15] = [true, false, true, false, false, false, false, false, false, false, false, false, false, false, false];
-const R6: [bool; 15] = [false, true, true, false, false, false, false, false, false, false, false, false, false, false, false];
-const R7: [bool; 15] = [true, true, true, false, false, false, false, false, false, false, false, false, false, false, false];
-const R8: [bool; 15] = [false, false, false, true, false, false, false, false, false, false, false, false, false, false, false];
-const R9: [bool; 15] = [true, false, false, true, false, false, false, false, false, false, false, false, false, false, false];
-const R10: [bool; 15] = [false, true, false, true, false, false, false, false, false, false, false, false, false, false, false];
-const R11: [bool; 15] = [true, true, false, true, false, false, false, false, false, false, false, false, false, false, false];
-const R12: [bool; 15] = [false, false, true, true, false, false, false, false, false, false, false, false, false, false, false];
-const R13: [bool; 15] = [true, false, true, true, false, false, false, false, false, false, false, false, false, false, false];
-const R14: [bool; 15] = [false, true, true, true, false, false, false, false, false, false, false, false, false, false, false];
-const R15: [bool; 15] = [true, true, true, true, false, false, false, false, false, false, false, false, false, false, false];
+//const SP: [bool; 15] = [false; 15];
+//const LCL: [bool; 15] = [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+//const ARG: [bool; 15] = [false, true, false, false, false, false, false, false, false, false, false, false, false, false, false];
+//const THIS: [bool; 15] = [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false];
+//const THAT: [bool; 15] = [false, false, true, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R0: [bool; 15] = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R1: [bool; 15] = [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R2: [bool; 15] = [false, true, false, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R3: [bool; 15] = [true, true, false, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R4: [bool; 15] = [false, false, true, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R5: [bool; 15] = [true, false, true, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R6: [bool; 15] = [false, true, true, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R7: [bool; 15] = [true, true, true, false, false, false, false, false, false, false, false, false, false, false, false];
+//const R8: [bool; 15] = [false, false, false, true, false, false, false, false, false, false, false, false, false, false, false];
+//const R9: [bool; 15] = [true, false, false, true, false, false, false, false, false, false, false, false, false, false, false];
+//const R10: [bool; 15] = [false, true, false, true, false, false, false, false, false, false, false, false, false, false, false];
+//const R11: [bool; 15] = [true, true, false, true, false, false, false, false, false, false, false, false, false, false, false];
+//const R12: [bool; 15] = [false, false, true, true, false, false, false, false, false, false, false, false, false, false, false];
+//const R13: [bool; 15] = [true, false, true, true, false, false, false, false, false, false, false, false, false, false, false];
+//const R14: [bool; 15] = [false, true, true, true, false, false, false, false, false, false, false, false, false, false, false];
+//const R15: [bool; 15] = [true, true, true, true, false, false, false, false, false, false, false, false, false, false, false];
 
 pub fn assemble() -> Result<(), Box<std::error::Error>> {
 	let mut pc: u16 = 0;
 	let mut label: u16 = 16;
 	let mut simbol = HashMap::new();
-	let mut add_simbol = false;
+	//let add_simbol = false;
 	for result in BufReader::new(File::open("test.asm")?).lines() {
 		let mut l = result?;
 		l.retain(|c| c != '\t');
@@ -72,7 +72,7 @@ pub fn assemble() -> Result<(), Box<std::error::Error>> {
 					f.write(format!("{:0>16b}", n).as_bytes()).unwrap();
 					f.write(b"\n").unwrap();
 				},
-				Err(n) => {
+				Err(_n) => {
 					if !simbol.contains_key(&command) {
 						simbol.insert(command, label);
 						f.write(format!("{:0>16b}", label).as_bytes()).unwrap();
