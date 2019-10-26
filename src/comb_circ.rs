@@ -131,7 +131,7 @@ pub fn add16(x: [bool; 16], y: [bool; 16]) -> [bool; 16] {
 	ans
 }
 
-pub fn inc16(x: [bool; 16]) -> [bool; 16]  {
+pub fn inc16(x: [bool; 16]) -> [bool; 16] {
 	let y = [true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
 	add16(x, y)
 }

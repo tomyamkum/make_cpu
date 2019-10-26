@@ -5,5 +5,5 @@ fn main() {
 	let mut computer = Computer::new();
 	computer.load("test.hack");
 	computer.exec(false);
-	//assemble();
+	//assemble("test.asm");
 }
